@@ -53,6 +53,42 @@ $registrado = (Get-ItemProperty -Path ('Registry::' + $claveHost) -ErrorAction S
 if ($registrado -ne $manifiesto) { throw "el host no quedó registrado en $claveHost" }
 
 New-Item -ItemType Directory -Force (Join-Path $perfil 'extensions') | Out-Null
+
+# Paquete de idioma español. La extensión se traduce con el idioma de Firefox,
+# así que el perfil del agente lleva el es-ES de Mozilla. El rango de
+# compatibilidad del paquete es "159.*" (toda la rama), por lo que vale para
+# cualquier build de esa versión; tras un salto de versión mayor, este bloque
+# descarga el paquete nuevo. Si no hay red, se avisa y la instalación sigue (el
+# perfil cae a inglés hasta que se instale el paquete).
+function Obtener-VersionLangpack($xpi) {
+  Add-Type -AssemblyName System.IO.Compression.FileSystem
+  $zip = [IO.Compression.ZipFile]::OpenRead($xpi)
+  try {
+    $e = $zip.Entries | Where-Object { $_.FullName -eq 'manifest.json' }
+    $sr = New-Object IO.StreamReader($e.Open())
+    try { ($sr.ReadToEnd() | ConvertFrom-Json).version } finally { $sr.Close() }
+  } finally { $zip.Dispose() }
+}
+
+$ffMajor = ([version](Get-Item $firefoxDev).VersionInfo.ProductVersion).Major
+$lpXpi    = Join-Path $perfil 'extensions\langpack-es-ES@devedition.mozilla.org.xpi'
+$lpMajor  = if (Test-Path $lpXpi) { ([version](Obtener-VersionLangpack $lpXpi)).Major } else { 0 }
+if ($lpMajor -ne $ffMajor) {
+  try {
+    $relBase = 'https://ftp.mozilla.org/pub/devedition/releases'
+    $url = $null
+    foreach ($n in 1..20) {
+      $cand = "$relBase/$ffMajor.0b$n/win64/xpi/es-ES.xpi"
+      try { Invoke-WebRequest $cand -Method Head -TimeoutSec 15 -UseBasicParsing | Out-Null; $url = $cand } catch {}
+    }
+    if (-not $url) { throw "sin paquete es-ES publicado para Firefox $ffMajor" }
+    Invoke-WebRequest $url -OutFile $lpXpi -TimeoutSec 60 -UseBasicParsing
+    Write-Output "paquete de idioma es-ES: $url"
+  } catch {
+    Write-Warning "no se instaló el paquete de idioma español: $($_.Exception.Message)"
+  }
+}
+
 $prefs = @(
   'user_pref("xpinstall.signatures.required", false);'
   'user_pref("extensions.experiments.enabled", true);'
@@ -83,6 +119,9 @@ $prefs = @(
   # Con la ventana tapada Firefox deja de componerla y APZ no sabe dónde cae
   # un clic. Cuesta algo de GPU con la ventana oculta.
   'user_pref("widget.windows.window_occlusion_tracking.enabled", false);'
+  # La extensión muestra sus textos en el idioma de Firefox; el perfil va en
+  # español (requiere el paquete de idioma es-ES, que se instala más abajo).
+  'user_pref("intl.locale.requested", "es-ES");'
 )
 [IO.File]::WriteAllLines((Join-Path $perfil 'user.js'), $prefs, $utf8)
 
