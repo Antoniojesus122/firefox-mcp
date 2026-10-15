@@ -13,6 +13,13 @@ Solo Windows por ahora.
 
 ## Pasos (vía Python, recomendada)
 
+Si PowerShell no deja ejecutar scripts (`Restricted` por defecto), habilítalos para tu usuario una vez (no
+necesita administrador):
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+
 Desde la raíz del repositorio, en PowerShell:
 
 ```powershell
