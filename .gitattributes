@@ -1,0 +1,7 @@
+# Normaliza los finales de línea: LF en el repositorio.
+* text=auto eol=lf
+
+# Scripts de Windows: CRLF al sacarlos del repositorio.
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
