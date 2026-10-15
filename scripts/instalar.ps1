@@ -6,6 +6,11 @@
 # ejecutables propios sin firmar pero no los scripts que ejecuta un python.exe
 # de confianza. Los binarios de Go siguen en el repo como alternativa
 # (scripts/instalar-go.ps1).
+param(
+  # Idioma del perfil del agente. Por defecto, el del sistema. La extensión se
+  # traduce con el idioma de Firefox; con un idioma sin traducción cae a inglés.
+  [string]$Idioma = (Get-UICulture).Name
+)
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'comun.ps1')
 
@@ -54,12 +59,13 @@ if ($registrado -ne $manifiesto) { throw "el host no quedó registrado en $clave
 
 New-Item -ItemType Directory -Force (Join-Path $perfil 'extensions') | Out-Null
 
-# Paquete de idioma español. La extensión se traduce con el idioma de Firefox,
-# así que el perfil del agente lleva el es-ES de Mozilla. El rango de
-# compatibilidad del paquete es "159.*" (toda la rama), por lo que vale para
-# cualquier build de esa versión; tras un salto de versión mayor, este bloque
-# descarga el paquete nuevo. Si no hay red, se avisa y la instalación sigue (el
-# perfil cae a inglés hasta que se instale el paquete).
+# Paquete de idioma. La extensión se traduce con el idioma de Firefox, pero la
+# build viene en inglés; para otro idioma se instala el paquete de Mozilla que
+# corresponde a la versión. El rango del paquete abarca toda la rama (p. ej.
+# "159.*"), así que vale para cualquier build de esa versión; tras un salto de
+# versión mayor, este bloque descarga el nuevo. Se prueba el código completo
+# (es-ES) y luego el corto (fr, de...), que es como Mozilla nombra algunos. Sin
+# red, se avisa y la instalación sigue; el inglés no necesita paquete.
 function Obtener-VersionLangpack($xpi) {
   Add-Type -AssemblyName System.IO.Compression.FileSystem
   $zip = [IO.Compression.ZipFile]::OpenRead($xpi)
@@ -70,22 +76,31 @@ function Obtener-VersionLangpack($xpi) {
   } finally { $zip.Dispose() }
 }
 
-$ffMajor = ([version](Get-Item $firefoxDev).VersionInfo.ProductVersion).Major
-$lpXpi    = Join-Path $perfil 'extensions\langpack-es-ES@devedition.mozilla.org.xpi'
-$lpMajor  = if (Test-Path $lpXpi) { ([version](Obtener-VersionLangpack $lpXpi)).Major } else { 0 }
-if ($lpMajor -ne $ffMajor) {
-  try {
-    $relBase = 'https://ftp.mozilla.org/pub/devedition/releases'
-    $url = $null
-    foreach ($n in 1..20) {
-      $cand = "$relBase/$ffMajor.0b$n/win64/xpi/es-ES.xpi"
-      try { Invoke-WebRequest $cand -Method Head -TimeoutSec 15 -UseBasicParsing | Out-Null; $url = $cand } catch {}
+if ($Idioma -and -not $Idioma.StartsWith('en')) {
+  $ffMajor = ([version](Get-Item $firefoxDev).VersionInfo.ProductVersion).Major
+  $extDir  = Join-Path $perfil 'extensions'
+  $viejo   = Get-ChildItem $extDir -Filter 'langpack-*.xpi' -ErrorAction SilentlyContinue | Select-Object -First 1
+  $lpMajor = if ($viejo) { try { ([version](Obtener-VersionLangpack $viejo.FullName)).Major } catch { 0 } } else { 0 }
+  if ($lpMajor -ne $ffMajor) {
+    try {
+      $relBase = 'https://ftp.mozilla.org/pub/devedition/releases'
+      $codigos = @($Idioma); if ($Idioma.Contains('-')) { $codigos += $Idioma.Split('-')[0] }
+      $url = $null; $codigo = $null
+      foreach ($c in $codigos) {
+        foreach ($n in 1..20) {
+          $cand = "$relBase/$ffMajor.0b$n/win64/xpi/$c.xpi"
+          try { Invoke-WebRequest $cand -Method Head -TimeoutSec 15 -UseBasicParsing | Out-Null; $url = $cand; $codigo = $c } catch {}
+        }
+        if ($url) { break }
+      }
+      if (-not $url) { throw "sin paquete de idioma '$Idioma' para Firefox $ffMajor" }
+      if ($viejo) { Remove-Item $viejo.FullName -Force }
+      $lpXpi = Join-Path $extDir "langpack-$codigo@devedition.mozilla.org.xpi"
+      Invoke-WebRequest $url -OutFile $lpXpi -TimeoutSec 60 -UseBasicParsing
+      Write-Output "paquete de idioma: $url"
+    } catch {
+      Write-Warning "no se instaló el paquete de idioma '$Idioma': $($_.Exception.Message)"
     }
-    if (-not $url) { throw "sin paquete es-ES publicado para Firefox $ffMajor" }
-    Invoke-WebRequest $url -OutFile $lpXpi -TimeoutSec 60 -UseBasicParsing
-    Write-Output "paquete de idioma es-ES: $url"
-  } catch {
-    Write-Warning "no se instaló el paquete de idioma español: $($_.Exception.Message)"
   }
 }
 
@@ -119,9 +134,9 @@ $prefs = @(
   # Con la ventana tapada Firefox deja de componerla y APZ no sabe dónde cae
   # un clic. Cuesta algo de GPU con la ventana oculta.
   'user_pref("widget.windows.window_occlusion_tracking.enabled", false);'
-  # La extensión muestra sus textos en el idioma de Firefox; el perfil va en
-  # español (requiere el paquete de idioma es-ES, que se instala más abajo).
-  'user_pref("intl.locale.requested", "es-ES");'
+  # La extensión muestra sus textos en el idioma de Firefox; el perfil se fija
+  # al idioma elegido (su paquete se instala más arriba; el inglés no lo pide).
+  "user_pref(`"intl.locale.requested`", `"$Idioma`");"
 )
 [IO.File]::WriteAllLines((Join-Path $perfil 'user.js'), $prefs, $utf8)
 

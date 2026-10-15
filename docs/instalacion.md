@@ -5,7 +5,8 @@ Solo Windows por ahora.
 ## Requisitos
 
 - **Firefox Developer Edition** o **Nightly** (para el clic y el teclado reales; en Firefox normal la
-  extensión funciona con eventos sintéticos).
+  extensión funciona con eventos sintéticos). Los scripts los buscan en su ruta habitual; si está en
+  otro sitio, apúntalo con la variable `FIREFOX_DEV`.
 - Para la vía Python: **Python 3** de [python.org](https://www.python.org/) (no el alias de la Microsoft
   Store).
 - Para la vía Go: **Go 1.21+**.
@@ -27,6 +28,16 @@ scripts\abrir.ps1        # abre Firefox con el perfil y la extensión
 - Crea `py\policy.json` a partir de la plantilla si no existe.
 
 Mientras Firefox esté abierto así, el host está en marcha y el servidor MCP puede conectarse.
+
+## Idioma
+
+La extensión se traduce con el idioma de Firefox (inglés, español, francés, alemán, italiano y portugués
+de Brasil; con cualquier otro cae a inglés). `instalar.ps1` deja el perfil en el idioma del sistema y, si
+hace falta, descarga el paquete de idioma de Mozilla que corresponde a la versión. Para forzar otro:
+
+```powershell
+scripts\instalar.ps1 -Idioma es-ES
+```
 
 ## Registrar el servidor en el cliente MCP
 
