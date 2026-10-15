@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Agente</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font: 13px system-ui, sans-serif; margin: 0; padding: 10px; }
+    h1 { font-size: 14px; margin: 0 0 8px; }
+    .fila { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .punto { width: 10px; height: 10px; border-radius: 50%; background: #999; }
+    .on { background: #c62828; }
+    .ro { background: #1565c0; }
+    button { font: inherit; padding: 6px 10px; border-radius: 4px; cursor: pointer; border: 1px solid #999; background: #f4f4f4; }
+    button.stop { background: #c62828; color: #fff; border: 0; }
+    .chips { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0 10px; }
+    .chip { background: rgba(127,127,127,.18); border-radius: 10px; padding: 1px 8px; font-size: 12px; }
+    .vacio { opacity: .6; }
+    #log { list-style: none; margin: 0; padding: 0; max-height: 60vh; overflow: auto; }
+    #log li { padding: 3px 0; border-top: 1px solid rgba(127,127,127,.2); display: flex; gap: 6px; }
+    #log .hora { opacity: .55; font-variant-numeric: tabular-nums; }
+    .barra { display: flex; justify-content: space-between; align-items: center; }
+    a { color: inherit; font-size: 12px; opacity: .7; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Agente para Firefox</h1>
+  <div class="fila">
+    <span class="punto" id="punto"></span>
+    <span id="estado">...</span>
+    <button id="toggle" style="margin-left:auto"></button>
+  </div>
+  <div id="cont" class="fila" style="font-size:12px;opacity:.75"></div>
+  <div>Dominios con permiso</div>
+  <div class="chips" id="dominios"></div>
+  <div class="barra">
+    <div>Actividad</div>
+    <a id="limpiar">limpiar</a>
+  </div>
+  <ul id="log"></ul>
+  <script src="sidebar.js"></script>
+</body>
+</html>

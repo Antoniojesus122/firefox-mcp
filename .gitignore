@@ -1,0 +1,21 @@
+# Artefactos de build y de ejecución
+/bin/
+/dist-publico/
+/agente-firefox.xpi
+
+# Perfil de Firefox y datos locales
+/.local/
+
+# Ficheros generados por la instalación (rutas de máquina)
+/py/firefox_mcp.json
+/py/host.bat
+/py/policy.json
+/bin/firefox_mcp.json
+/bin/policy.json
+
+# Python
+__pycache__/
+*.pyc
+
+# Registros
+*.log

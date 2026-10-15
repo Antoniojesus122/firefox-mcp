@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<title>Marco de otro sitio</title>
+<style>
+  body { font: 16px system-ui, sans-serif; margin: 12px; }
+  button { font: inherit; padding: 8px 12px; }
+</style>
+<button id="boton-marco">Botón del iframe</button>
+<script>
+  const padre = "http://127.0.0.1:8150";
+  const avisar = dato => parent.postMessage(dato, padre);
+  for (const tipo of ["pointerdown", "mousedown", "pointerup", "mouseup", "click"]) {
+    document.addEventListener(tipo, e => avisar({
+      marco: "iframe", tipo, confiable: e.isTrusted, objetivo: e.target.id || e.target.nodeName,
+    }), true);
+  }
+  document.getElementById("boton-marco").addEventListener("click", () => {
+    avisar({ marco: "iframe", tipo: "accion", activacion: navigator.userActivation ? navigator.userActivation.isActive : null });
+  });
+</script>
+</html>

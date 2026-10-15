@@ -1,0 +1,91 @@
+[
+  {
+    "namespace": "agentInput",
+    "description": "Ratón, teclado y capturas para las pestañas que controla el agente.",
+    "functions": [
+      {
+        "name": "click",
+        "type": "function",
+        "async": true,
+        "description": "Clic izquierdo en coordenadas CSS relativas al viewport de la pestaña.",
+        "parameters": [
+          { "name": "tabId", "type": "integer", "minimum": 0 },
+          { "name": "x", "type": "number" },
+          { "name": "y", "type": "number" }
+        ]
+      },
+      {
+        "name": "rightClick",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          { "name": "tabId", "type": "integer", "minimum": 0 },
+          { "name": "x", "type": "number" },
+          { "name": "y", "type": "number" }
+        ]
+      },
+      {
+        "name": "drag",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          { "name": "tabId", "type": "integer", "minimum": 0 },
+          { "name": "x1", "type": "number" },
+          { "name": "y1", "type": "number" },
+          { "name": "x2", "type": "number" },
+          { "name": "y2", "type": "number" }
+        ]
+      },
+      {
+        "name": "confirm",
+        "type": "function",
+        "async": true,
+        "description": "Diálogo de confirmación del navegador (no de la página). Devuelve true si el usuario acepta.",
+        "parameters": [
+          { "name": "title", "type": "string" },
+          { "name": "message", "type": "string" }
+        ]
+      },
+      {
+        "name": "doubleClick",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          { "name": "tabId", "type": "integer", "minimum": 0 },
+          { "name": "x", "type": "number" },
+          { "name": "y", "type": "number" }
+        ]
+      },
+      {
+        "name": "typeText",
+        "type": "function",
+        "async": true,
+        "description": "Pulsa las teclas del texto sobre el elemento con el foco.",
+        "parameters": [
+          { "name": "tabId", "type": "integer", "minimum": 0 },
+          { "name": "text", "type": "string" }
+        ]
+      },
+      {
+        "name": "inspect",
+        "type": "function",
+        "async": true,
+        "description": "Diagnóstico: qué pestaña está seleccionada y qué hay bajo un punto.",
+        "parameters": [
+          { "name": "tabId", "type": "integer", "minimum": 0 },
+          { "name": "x", "type": "number" },
+          { "name": "y", "type": "number" }
+        ]
+      },
+      {
+        "name": "snapshot",
+        "type": "function",
+        "async": true,
+        "description": "Captura PNG del viewport de la pestaña, aunque no esté seleccionada.",
+        "parameters": [
+          { "name": "tabId", "type": "integer", "minimum": 0 }
+        ]
+      }
+    ]
+  }
+]

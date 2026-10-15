@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<title>Prueba de entrada</title>
+<style>
+  body { font: 16px system-ui, sans-serif; margin: 24px; }
+  button, input { font: inherit; padding: 8px 12px; margin: 8px 0; display: block; }
+  iframe { width: 420px; height: 120px; border: 1px solid #999; display: block; margin: 12px 0; }
+  pre { background: #f4f4f4; padding: 8px; max-height: 240px; overflow: auto; font-size: 12px; }
+</style>
+<button id="boton">Botón</button>
+<input id="campo" placeholder="Campo" autocomplete="off">
+<iframe id="marco" src="http://localhost:8150/marco.html"></iframe>
+<pre id="registro"></pre>
+<script>
+  const registro = document.getElementById("registro");
+  const anotar = dato => registro.append(JSON.stringify(dato) + "\n");
+  const tipos = ["pointerdown", "mousedown", "pointerup", "mouseup", "click", "keydown", "keyup", "beforeinput", "input"];
+  for (const tipo of tipos) {
+    document.addEventListener(tipo, e => anotar({
+      marco: "principal", tipo, confiable: e.isTrusted, objetivo: e.target.id || e.target.nodeName, tecla: e.key,
+    }), true);
+  }
+  document.getElementById("boton").addEventListener("click", () => {
+    const r = { marco: "principal", tipo: "accion", activacion: navigator.userActivation ? navigator.userActivation.isActive : null };
+    const w = window.open("about:blank", "_blank", "popup,width=200,height=200");
+    r.ventana = Boolean(w);
+    if (w) w.close();
+    anotar(r);
+  });
+  window.addEventListener("message", e => {
+    if (e.origin === "http://localhost:8150") anotar(e.data);
+  });
+</script>
+</html>

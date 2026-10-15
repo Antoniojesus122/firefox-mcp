@@ -1,0 +1,43 @@
+{
+  "manifest_version": 2,
+  "name": "Agente para Firefox",
+  "version": "0.1.0",
+  "description": "Permite a un cliente MCP manejar Firefox a través de un host local, con permiso por dominio, interruptor y ocultado de secretos.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "agente@firefox-mcp",
+      "strict_min_version": "128.0"
+    }
+  },
+  "permissions": ["nativeMessaging", "tabs", "webNavigation", "webRequest", "contextualIdentities", "cookies", "downloads", "<all_urls>"],
+  "browser_action": {
+    "default_title": "Agente activo. Pulsa para detenerlo."
+  },
+  "sidebar_action": {
+    "default_title": "Agente",
+    "default_panel": "sidebar.html"
+  },
+  "background": {
+    "scripts": ["security.js", "net.js", "page.js", "background.js"],
+    "persistent": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "all_frames": true,
+      "run_at": "document_start",
+      "match_about_blank": true,
+      "js": ["console-hook.js"]
+    }
+  ],
+  "experiment_apis": {
+    "agentInput": {
+      "schema": "experiments/input/schema.json",
+      "parent": {
+        "scopes": ["addon_parent"],
+        "paths": [["agentInput"]],
+        "script": "experiments/input/parent.js"
+      }
+    }
+  }
+}

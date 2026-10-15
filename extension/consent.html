@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Permiso del agente</title>
+  <style>
+    body { font: 14px system-ui, sans-serif; margin: 16px; }
+    h3 { margin: 0 0 8px; }
+    .msg { white-space: pre-wrap; margin: 8px 0 18px; }
+    button { font: inherit; padding: 8px 16px; margin-right: 8px; border-radius: 4px; cursor: pointer; }
+    #si { background: #c62828; color: #fff; border: 0; }
+    #no { background: #eee; border: 1px solid #999; }
+  </style>
+</head>
+<body>
+  <h3 id="titulo"></h3>
+  <div class="msg" id="mensaje"></div>
+  <button id="si">Permitir</button>
+  <button id="no">Denegar</button>
+  <script src="consent.js"></script>
+</body>
+</html>

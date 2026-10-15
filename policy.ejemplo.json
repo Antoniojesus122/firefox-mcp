@@ -1,0 +1,9 @@
+{
+  "mode": "interactive",
+  "allowedDomains": [],
+  "confirmNewDomain": true,
+  "confirmDownloads": true,
+  "sessionIdleMinutes": 15,
+  "startDisarmed": false,
+  "testAutoApprove": false
+}

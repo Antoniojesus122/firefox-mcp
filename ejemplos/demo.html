@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<title>Demo: consola, red y drag-and-drop</title>
+<style>
+  body { font: 15px system-ui, sans-serif; margin: 16px; }
+  .caja { display: inline-block; width: 120px; height: 60px; border: 1px solid #999; margin: 8px; text-align: center; line-height: 60px; }
+  #origen { background: #cde; cursor: grab; }
+  #destino { background: #efe; }
+  pre { background: #f4f4f4; padding: 6px; }
+</style>
+<div id="origen" draggable="true">Arrástrame</div>
+<div id="destino">Suéltalo aquí</div>
+<pre id="log"></pre>
+<script>
+  const log = m => document.getElementById("log").append(m + "\n");
+  console.log("mensaje de prueba", 42);
+  console.warn("un aviso");
+  console.error("un error de prueba");
+  fetch("/marco.html").then(() => log("fetch hecho"));
+
+  const origen = document.getElementById("origen");
+  const destino = document.getElementById("destino");
+  origen.addEventListener("dragstart", e => { e.dataTransfer.setData("text/plain", "carga"); });
+  destino.addEventListener("dragover", e => e.preventDefault());
+  destino.addEventListener("drop", e => {
+    e.preventDefault();
+    log("drop: " + e.dataTransfer.getData("text/plain"));
+    destino.textContent = "Soltado";
+  });
+
+  setTimeout(() => { porConfirmarQueNoExiste(); }, 150);
+</script>
+</html>

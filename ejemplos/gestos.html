@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<title>Prueba de gestos</title>
+<style>
+  body { font: 15px system-ui, sans-serif; margin: 16px; }
+  #caja { width: 200px; height: 100px; overflow: auto; border: 1px solid #999; }
+  #caja div { height: 600px; background: linear-gradient(#fff, #ccc); }
+  #menu { width: 200px; height: 60px; background: #eee; border: 1px solid #999; margin: 12px 0; }
+  input[type=range] { width: 300px; }
+  pre { background: #f4f4f4; padding: 6px; }
+</style>
+<input id="rango" type="range" min="0" max="100" value="0">
+<span id="valor">0</span>
+<div id="menu">Clic derecho aquí</div>
+<div id="caja"><div></div></div>
+<pre id="log"></pre>
+<script>
+  const log = m => document.getElementById("log").append(m + "\n");
+  const r = document.getElementById("rango");
+  r.addEventListener("input", () => { document.getElementById("valor").textContent = r.value; });
+  document.getElementById("menu").addEventListener("contextmenu", e => {
+    e.preventDefault();
+    log("contextmenu isTrusted=" + e.isTrusted);
+  });
+  document.getElementById("caja").addEventListener("scroll", e => {
+    log("scroll caja=" + e.target.scrollTop);
+  }, { once: true });
+</script>
+</html>
