@@ -1,0 +1,61 @@
+{
+  "extName": { "message": "Agente para Firefox" },
+  "extDescription": { "message": "Permite que um cliente MCP controle o Firefox por meio de um host local, com consentimento por domínio, interruptor e ocultação de segredos." },
+  "sidebarTitle": { "message": "Agente" },
+  "sidebarHeading": { "message": "Agente para Firefox" },
+  "approvedDomainsLabel": { "message": "Domínios permitidos" },
+  "activityLabel": { "message": "Atividade" },
+  "clearLink": { "message": "limpar" },
+  "containerLabel": { "message": "Contêiner próprio do agente" },
+  "statusStopped": { "message": "Parado" },
+  "statusActive": { "message": "Ativo" },
+  "statusActiveReadonly": { "message": "Ativo (somente leitura)" },
+  "btnStop": { "message": "Parar" },
+  "btnStart": { "message": "Ativar" },
+  "noDomains": { "message": "nenhum ainda" },
+  "noActivity": { "message": "nenhuma ação ainda" },
+  "badgeTitleStopped": { "message": "Agente parado. Clique para ativá-lo." },
+  "badgeTitleActive": { "message": "Agente ativo (interativo). Clique para pará-lo." },
+  "badgeTitleReadonly": { "message": "Agente ativo (somente leitura). Clique para pará-lo." },
+  "consentTitle": { "message": "Permissão do agente" },
+  "consentMessage": {
+    "message": "O agente quer $verb$ em:\n\n$domain$\n\nVocê permite durante esta sessão?",
+    "placeholders": { "verb": { "content": "$1" }, "domain": { "content": "$2" } }
+  },
+  "consentAllow": { "message": "Permitir" },
+  "consentDeny": { "message": "Negar" },
+  "verbNavigate": { "message": "navegar" },
+  "verbClick": { "message": "clicar" },
+  "verbType": { "message": "digitar" },
+  "verbAct": { "message": "agir" },
+  "verbDownloadFrom": { "message": "baixar de" },
+  "downloadTitle": { "message": "Download do agente" },
+  "downloadMessage": {
+    "message": "O agente quer baixar:\n\n$url$\n\nVocê permite?",
+    "placeholders": { "url": { "content": "$1" } }
+  },
+  "errStopped": { "message": "o agente está parado; ative-o pelo botão da barra de ferramentas" },
+  "errDenied": {
+    "message": "permissão negada pelo usuário para $domain$",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "errNotAllowlisted": {
+    "message": "o domínio $domain$ não está na lista de permissões da política",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "errDownloadDenied": { "message": "download negado pelo usuário" },
+  "logOpen": { "message": "Abriu $url$", "placeholders": { "url": { "content": "$1" } } },
+  "logNavigate": { "message": "Navegou para $url$", "placeholders": { "url": { "content": "$1" } } },
+  "logClose": { "message": "Fechou uma aba" },
+  "logClick": { "message": "Clique" },
+  "logClickRef": { "message": "Clicou em $ref$", "placeholders": { "ref": { "content": "$1" } } },
+  "logClickAt": { "message": "Clicou em ($x$, $y$)", "placeholders": { "x": { "content": "$1" }, "y": { "content": "$2" } } },
+  "logDoubleClick": { "message": "Clique duplo" },
+  "logRightClick": { "message": "Clique direito" },
+  "logDrag": { "message": "Arrastou" },
+  "logDnd": { "message": "Arrastar e soltar" },
+  "logType": { "message": "Digitou texto ($count$ caracteres)", "placeholders": { "count": { "content": "$1" } } },
+  "logScroll": { "message": "Rolou a página" },
+  "logDownload": { "message": "Baixou $url$", "placeholders": { "url": { "content": "$1" } } },
+  "logSnapshot": { "message": "Capturou a tela" }
+}

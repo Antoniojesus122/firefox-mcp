@@ -52,6 +52,10 @@ function setActive(on) {
   }
 }
 
+function i18n(key, ...subs) {
+  return browser.i18n.getMessage(key, subs.length ? subs : undefined);
+}
+
 function updateBadge() {
   if (!browser.browserAction) {
     return;
@@ -60,8 +64,8 @@ function updateBadge() {
   const text = !security.active ? "" : readonly ? "RO" : "ON";
   const color = !security.active ? "#777777" : readonly ? "#1565c0" : "#c62828";
   const title = !security.active
-    ? "Agente detenido. Pulsa para activarlo."
-    : `Agente activo (${readonly ? "solo lectura" : "interactivo"}). Pulsa para detenerlo.`;
+    ? i18n("badgeTitleStopped")
+    : readonly ? i18n("badgeTitleReadonly") : i18n("badgeTitleActive");
   browser.browserAction.setBadgeText({ text });
   browser.browserAction.setBadgeBackgroundColor({ color });
   browser.browserAction.setTitle({ title });
@@ -103,7 +107,7 @@ async function ensureDomainAllowed(domain, action) {
     return;
   }
   if (!inAllowlist(domain)) {
-    throw new Error(`el dominio ${domain} no está en la lista blanca de la política`);
+    throw new Error(i18n("errNotAllowlisted", domain));
   }
   if (security.approved.has(domain)) {
     return;
@@ -117,12 +121,9 @@ async function ensureDomainAllowed(domain, action) {
     security.approved.add(domain);
     return;
   }
-  const ok = await askConsent(
-    "Permiso del agente",
-    `El agente quiere ${action} en:\n\n${domain}\n\n¿Lo permites durante esta sesión?`
-  );
+  const ok = await askConsent(i18n("consentTitle"), i18n("consentMessage", action, domain));
   if (!ok) {
-    throw new Error(`permiso denegado por el usuario para ${domain}`);
+    throw new Error(i18n("errDenied", domain));
   }
   security.approved.add(domain);
 }
@@ -182,22 +183,22 @@ async function guardAction(cmd, msg) {
     return;
   }
   if (!security.active) {
-    throw new Error("el agente está detenido; actívalo desde el botón de la barra de Firefox");
+    throw new Error(i18n("errStopped"));
   }
   touch();
 
   let domain = "";
-  let verb = "actuar";
+  let verb = i18n("verbAct");
   if (cmd === "open" || cmd === "navigate") {
     domain = domainOf(msg.url);
-    verb = "navegar";
+    verb = i18n("verbNavigate");
   } else if (cmd === "download") {
     domain = domainOf(msg.url);
-    verb = "descargar de";
+    verb = i18n("verbDownloadFrom");
   } else if (typeof msg.tabId === "number") {
     const tab = await browser.tabs.get(msg.tabId);
     domain = domainOf(tab.url);
-    verb = cmd === "type" ? "escribir" : "hacer clic";
+    verb = i18n(cmd === "type" ? "verbType" : "verbClick");
   }
   // Las páginas internas (about:, moz-extension:) no tienen dominio: se dejan.
   if (domain) {

@@ -1,0 +1,61 @@
+{
+  "extName": { "message": "Agente para Firefox" },
+  "extDescription": { "message": "Permite a un cliente MCP manejar Firefox a través de un host local, con permiso por dominio, interruptor y ocultado de secretos." },
+  "sidebarTitle": { "message": "Agente" },
+  "sidebarHeading": { "message": "Agente para Firefox" },
+  "approvedDomainsLabel": { "message": "Dominios con permiso" },
+  "activityLabel": { "message": "Actividad" },
+  "clearLink": { "message": "limpiar" },
+  "containerLabel": { "message": "Contenedor propio del agente" },
+  "statusStopped": { "message": "Detenido" },
+  "statusActive": { "message": "Activo" },
+  "statusActiveReadonly": { "message": "Activo (solo lectura)" },
+  "btnStop": { "message": "Detener" },
+  "btnStart": { "message": "Activar" },
+  "noDomains": { "message": "ninguno todavía" },
+  "noActivity": { "message": "sin acciones todavía" },
+  "badgeTitleStopped": { "message": "Agente detenido. Pulsa para activarlo." },
+  "badgeTitleActive": { "message": "Agente activo (interactivo). Pulsa para detenerlo." },
+  "badgeTitleReadonly": { "message": "Agente activo (solo lectura). Pulsa para detenerlo." },
+  "consentTitle": { "message": "Permiso del agente" },
+  "consentMessage": {
+    "message": "El agente quiere $verb$ en:\n\n$domain$\n\n¿Lo permites durante esta sesión?",
+    "placeholders": { "verb": { "content": "$1" }, "domain": { "content": "$2" } }
+  },
+  "consentAllow": { "message": "Permitir" },
+  "consentDeny": { "message": "Denegar" },
+  "verbNavigate": { "message": "navegar" },
+  "verbClick": { "message": "hacer clic" },
+  "verbType": { "message": "escribir" },
+  "verbAct": { "message": "actuar" },
+  "verbDownloadFrom": { "message": "descargar de" },
+  "downloadTitle": { "message": "Descarga del agente" },
+  "downloadMessage": {
+    "message": "El agente quiere descargar:\n\n$url$\n\n¿Lo permites?",
+    "placeholders": { "url": { "content": "$1" } }
+  },
+  "errStopped": { "message": "el agente está detenido; actívalo desde el botón de la barra de Firefox" },
+  "errDenied": {
+    "message": "permiso denegado por el usuario para $domain$",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "errNotAllowlisted": {
+    "message": "el dominio $domain$ no está en la lista blanca de la política",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "errDownloadDenied": { "message": "descarga denegada por el usuario" },
+  "logOpen": { "message": "Abrió $url$", "placeholders": { "url": { "content": "$1" } } },
+  "logNavigate": { "message": "Navegó a $url$", "placeholders": { "url": { "content": "$1" } } },
+  "logClose": { "message": "Cerró una pestaña" },
+  "logClick": { "message": "Clic" },
+  "logClickRef": { "message": "Clic en $ref$", "placeholders": { "ref": { "content": "$1" } } },
+  "logClickAt": { "message": "Clic en ($x$, $y$)", "placeholders": { "x": { "content": "$1" }, "y": { "content": "$2" } } },
+  "logDoubleClick": { "message": "Doble clic" },
+  "logRightClick": { "message": "Clic derecho" },
+  "logDrag": { "message": "Arrastró" },
+  "logDnd": { "message": "Arrastró y soltó" },
+  "logType": { "message": "Escribió texto ($count$ caracteres)", "placeholders": { "count": { "content": "$1" } } },
+  "logScroll": { "message": "Desplazó la página" },
+  "logDownload": { "message": "Descargó $url$", "placeholders": { "url": { "content": "$1" } } },
+  "logSnapshot": { "message": "Capturó la pantalla" }
+}

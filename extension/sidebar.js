@@ -3,10 +3,17 @@
 const port = browser.runtime.connect({ name: "panel" });
 
 const el = id => document.getElementById(id);
+const msg = key => browser.i18n.getMessage(key);
+
+// Rellena el texto estático desde las traducciones.
+document.title = msg("sidebarTitle");
+for (const node of document.querySelectorAll("[data-i18n]")) {
+  node.textContent = msg(node.getAttribute("data-i18n"));
+}
 
 function hora(t) {
   const d = new Date(t);
-  return d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  return d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 }
 
 function render(s) {
@@ -14,19 +21,19 @@ function render(s) {
   const readonly = s.mode === "readonly";
   punto.className = "punto " + (!s.active ? "" : readonly ? "ro" : "on");
   el("estado").textContent = !s.active
-    ? "Detenido"
-    : "Activo" + (readonly ? " (solo lectura)" : "");
+    ? msg("statusStopped")
+    : readonly ? msg("statusActiveReadonly") : msg("statusActive");
   const t = el("toggle");
-  t.textContent = s.active ? "Detener" : "Activar";
+  t.textContent = s.active ? msg("btnStop") : msg("btnStart");
   t.className = s.active ? "stop" : "";
-  el("cont").textContent = s.container ? "Contenedor propio del agente" : "";
+  el("cont").textContent = s.container ? msg("containerLabel") : "";
 
   const dom = el("dominios");
   dom.textContent = "";
   if (!s.approved || !s.approved.length) {
     const d = document.createElement("span");
     d.className = "chip vacio";
-    d.textContent = "ninguno todavía";
+    d.textContent = msg("noDomains");
     dom.appendChild(d);
   } else {
     for (const d of s.approved) {
@@ -43,7 +50,7 @@ function render(s) {
   if (!entries.length) {
     const li = document.createElement("li");
     li.className = "vacio";
-    li.textContent = "sin acciones todavía";
+    li.textContent = msg("noActivity");
     log.appendChild(li);
   }
   for (const e of entries) {

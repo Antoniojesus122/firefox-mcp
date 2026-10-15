@@ -1,8 +1,9 @@
 {
   "manifest_version": 2,
-  "name": "Agente para Firefox",
+  "name": "__MSG_extName__",
   "version": "0.1.0",
-  "description": "Permite a un cliente MCP manejar Firefox a través de un host local, con permiso por dominio, interruptor y ocultado de secretos.",
+  "description": "__MSG_extDescription__",
+  "default_locale": "en",
   "browser_specific_settings": {
     "gecko": {
       "id": "agente@firefox-mcp",
@@ -11,10 +12,10 @@
   },
   "permissions": ["nativeMessaging", "tabs", "webNavigation", "webRequest", "contextualIdentities", "cookies", "downloads", "<all_urls>"],
   "browser_action": {
-    "default_title": "Agente activo. Pulsa para detenerlo."
+    "default_title": "__MSG_badgeTitleActive__"
   },
   "sidebar_action": {
-    "default_title": "Agente",
+    "default_title": "__MSG_sidebarTitle__",
     "default_panel": "sidebar.html"
   },
   "background": {

@@ -1,0 +1,61 @@
+{
+  "extName": { "message": "Firefox Agent" },
+  "extDescription": { "message": "Lets an MCP client control Firefox through a local host, with per-domain consent, a kill switch and secret masking." },
+  "sidebarTitle": { "message": "Agent" },
+  "sidebarHeading": { "message": "Firefox Agent" },
+  "approvedDomainsLabel": { "message": "Allowed domains" },
+  "activityLabel": { "message": "Activity" },
+  "clearLink": { "message": "clear" },
+  "containerLabel": { "message": "Agent's own container" },
+  "statusStopped": { "message": "Stopped" },
+  "statusActive": { "message": "Active" },
+  "statusActiveReadonly": { "message": "Active (read-only)" },
+  "btnStop": { "message": "Stop" },
+  "btnStart": { "message": "Start" },
+  "noDomains": { "message": "none yet" },
+  "noActivity": { "message": "no actions yet" },
+  "badgeTitleStopped": { "message": "Agent stopped. Click to start it." },
+  "badgeTitleActive": { "message": "Agent active (interactive). Click to stop it." },
+  "badgeTitleReadonly": { "message": "Agent active (read-only). Click to stop it." },
+  "consentTitle": { "message": "Agent permission" },
+  "consentMessage": {
+    "message": "The agent wants to $verb$ on:\n\n$domain$\n\nDo you allow it for this session?",
+    "placeholders": { "verb": { "content": "$1" }, "domain": { "content": "$2" } }
+  },
+  "consentAllow": { "message": "Allow" },
+  "consentDeny": { "message": "Deny" },
+  "verbNavigate": { "message": "navigate" },
+  "verbClick": { "message": "click" },
+  "verbType": { "message": "type" },
+  "verbAct": { "message": "act" },
+  "verbDownloadFrom": { "message": "download from" },
+  "downloadTitle": { "message": "Agent download" },
+  "downloadMessage": {
+    "message": "The agent wants to download:\n\n$url$\n\nDo you allow it?",
+    "placeholders": { "url": { "content": "$1" } }
+  },
+  "errStopped": { "message": "the agent is stopped; start it from the toolbar button" },
+  "errDenied": {
+    "message": "permission denied by the user for $domain$",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "errNotAllowlisted": {
+    "message": "the domain $domain$ is not in the policy allowlist",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "errDownloadDenied": { "message": "download denied by the user" },
+  "logOpen": { "message": "Opened $url$", "placeholders": { "url": { "content": "$1" } } },
+  "logNavigate": { "message": "Navigated to $url$", "placeholders": { "url": { "content": "$1" } } },
+  "logClose": { "message": "Closed a tab" },
+  "logClick": { "message": "Click" },
+  "logClickRef": { "message": "Clicked $ref$", "placeholders": { "ref": { "content": "$1" } } },
+  "logClickAt": { "message": "Clicked at ($x$, $y$)", "placeholders": { "x": { "content": "$1" }, "y": { "content": "$2" } } },
+  "logDoubleClick": { "message": "Double click" },
+  "logRightClick": { "message": "Right click" },
+  "logDrag": { "message": "Dragged" },
+  "logDnd": { "message": "Drag and drop" },
+  "logType": { "message": "Typed text ($count$ chars)", "placeholders": { "count": { "content": "$1" } } },
+  "logScroll": { "message": "Scrolled the page" },
+  "logDownload": { "message": "Downloaded $url$", "placeholders": { "url": { "content": "$1" } } },
+  "logSnapshot": { "message": "Took a screenshot" }
+}

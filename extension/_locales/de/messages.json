@@ -1,0 +1,61 @@
+{
+  "extName": { "message": "Firefox-Agent" },
+  "extDescription": { "message": "Lässt einen MCP-Client Firefox über einen lokalen Host steuern, mit Zustimmung pro Domain, Not-Aus-Schalter und Maskierung von Geheimnissen." },
+  "sidebarTitle": { "message": "Agent" },
+  "sidebarHeading": { "message": "Firefox-Agent" },
+  "approvedDomainsLabel": { "message": "Erlaubte Domains" },
+  "activityLabel": { "message": "Aktivität" },
+  "clearLink": { "message": "leeren" },
+  "containerLabel": { "message": "Eigener Container des Agenten" },
+  "statusStopped": { "message": "Gestoppt" },
+  "statusActive": { "message": "Aktiv" },
+  "statusActiveReadonly": { "message": "Aktiv (nur lesen)" },
+  "btnStop": { "message": "Stoppen" },
+  "btnStart": { "message": "Starten" },
+  "noDomains": { "message": "noch keine" },
+  "noActivity": { "message": "noch keine Aktionen" },
+  "badgeTitleStopped": { "message": "Agent gestoppt. Zum Starten klicken." },
+  "badgeTitleActive": { "message": "Agent aktiv (interaktiv). Zum Stoppen klicken." },
+  "badgeTitleReadonly": { "message": "Agent aktiv (nur lesen). Zum Stoppen klicken." },
+  "consentTitle": { "message": "Berechtigung des Agenten" },
+  "consentMessage": {
+    "message": "Der Agent möchte $verb$ auf:\n\n$domain$\n\nErlaubst du es für diese Sitzung?",
+    "placeholders": { "verb": { "content": "$1" }, "domain": { "content": "$2" } }
+  },
+  "consentAllow": { "message": "Erlauben" },
+  "consentDeny": { "message": "Ablehnen" },
+  "verbNavigate": { "message": "navigieren" },
+  "verbClick": { "message": "klicken" },
+  "verbType": { "message": "tippen" },
+  "verbAct": { "message": "handeln" },
+  "verbDownloadFrom": { "message": "herunterladen von" },
+  "downloadTitle": { "message": "Download des Agenten" },
+  "downloadMessage": {
+    "message": "Der Agent möchte herunterladen:\n\n$url$\n\nErlaubst du es?",
+    "placeholders": { "url": { "content": "$1" } }
+  },
+  "errStopped": { "message": "der Agent ist gestoppt; starte ihn über die Schaltfläche in der Symbolleiste" },
+  "errDenied": {
+    "message": "Berechtigung vom Benutzer für $domain$ verweigert",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "errNotAllowlisted": {
+    "message": "die Domain $domain$ steht nicht auf der Positivliste der Richtlinie",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "errDownloadDenied": { "message": "Download vom Benutzer verweigert" },
+  "logOpen": { "message": "$url$ geöffnet", "placeholders": { "url": { "content": "$1" } } },
+  "logNavigate": { "message": "Zu $url$ navigiert", "placeholders": { "url": { "content": "$1" } } },
+  "logClose": { "message": "Tab geschlossen" },
+  "logClick": { "message": "Klick" },
+  "logClickRef": { "message": "Auf $ref$ geklickt", "placeholders": { "ref": { "content": "$1" } } },
+  "logClickAt": { "message": "Klick bei ($x$, $y$)", "placeholders": { "x": { "content": "$1" }, "y": { "content": "$2" } } },
+  "logDoubleClick": { "message": "Doppelklick" },
+  "logRightClick": { "message": "Rechtsklick" },
+  "logDrag": { "message": "Gezogen" },
+  "logDnd": { "message": "Ziehen und Ablegen" },
+  "logType": { "message": "Text getippt ($count$ Zeichen)", "placeholders": { "count": { "content": "$1" } } },
+  "logScroll": { "message": "Seite gescrollt" },
+  "logDownload": { "message": "$url$ heruntergeladen", "placeholders": { "url": { "content": "$1" } } },
+  "logSnapshot": { "message": "Screenshot aufgenommen" }
+}

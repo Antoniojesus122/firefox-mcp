@@ -24,18 +24,18 @@
   </style>
 </head>
 <body>
-  <h1>Agente para Firefox</h1>
+  <h1 data-i18n="sidebarHeading"></h1>
   <div class="fila">
     <span class="punto" id="punto"></span>
-    <span id="estado">...</span>
+    <span id="estado"></span>
     <button id="toggle" style="margin-left:auto"></button>
   </div>
   <div id="cont" class="fila" style="font-size:12px;opacity:.75"></div>
-  <div>Dominios con permiso</div>
+  <div data-i18n="approvedDomainsLabel"></div>
   <div class="chips" id="dominios"></div>
   <div class="barra">
-    <div>Actividad</div>
-    <a id="limpiar">limpiar</a>
+    <div data-i18n="activityLabel"></div>
+    <a id="limpiar" data-i18n="clearLink"></a>
   </div>
   <ul id="log"></ul>
   <script src="sidebar.js"></script>

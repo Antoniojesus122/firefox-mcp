@@ -260,9 +260,9 @@ const commands = {
   async download({ url }) {
     const p = security.policy;
     const ok = p.testAutoApprove || !p.confirmDownloads ||
-      await askConsent("Descarga del agente", `El agente quiere descargar:\n\n${url}\n\n¿Lo permites?`);
+      await askConsent(i18n("downloadTitle"), i18n("downloadMessage", url));
     if (!ok) {
-      throw new Error("descarga denegada por el usuario");
+      throw new Error(i18n("errDownloadDenied"));
     }
     const id = await browser.downloads.download({ url });
     return { id };
@@ -413,20 +413,20 @@ function logAction(text) {
 // de la página, para no filtrar secretos al panel.
 function logIfInteresting(cmd, msg) {
   const d = {
-    open: () => "Abrió " + (msg.url || ""),
-    navigate: () => "Navegó a " + (msg.url || ""),
-    close: () => "Cerró una pestaña",
-    click: () => "Clic",
-    click_ref: () => "Clic en " + (msg.ref || "un elemento"),
-    click_at: () => `Clic en (${Math.round(msg.x)}, ${Math.round(msg.y)})`,
-    double_click: () => "Doble clic",
-    right_click: () => "Clic derecho",
-    drag: () => "Arrastró",
-    dnd: () => "Arrastró y soltó",
-    type: () => `Escribió texto (${String(msg.text || "").length} caracteres)`,
-    scroll: () => "Desplazó la página",
-    download: () => "Descargó " + (msg.url || ""),
-    snapshot: () => "Capturó la pantalla",
+    open: () => i18n("logOpen", msg.url || ""),
+    navigate: () => i18n("logNavigate", msg.url || ""),
+    close: () => i18n("logClose"),
+    click: () => i18n("logClick"),
+    click_ref: () => i18n("logClickRef", msg.ref || ""),
+    click_at: () => i18n("logClickAt", String(Math.round(msg.x)), String(Math.round(msg.y))),
+    double_click: () => i18n("logDoubleClick"),
+    right_click: () => i18n("logRightClick"),
+    drag: () => i18n("logDrag"),
+    dnd: () => i18n("logDnd"),
+    type: () => i18n("logType", String(String(msg.text || "").length)),
+    scroll: () => i18n("logScroll"),
+    download: () => i18n("logDownload", msg.url || ""),
+    snapshot: () => i18n("logSnapshot"),
   }[cmd];
   if (d) {
     logAction(d());

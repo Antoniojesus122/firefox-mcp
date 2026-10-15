@@ -1,0 +1,61 @@
+{
+  "extName": { "message": "Agent pour Firefox" },
+  "extDescription": { "message": "Permet à un client MCP de piloter Firefox via un hôte local, avec consentement par domaine, interrupteur et masquage des secrets." },
+  "sidebarTitle": { "message": "Agent" },
+  "sidebarHeading": { "message": "Agent pour Firefox" },
+  "approvedDomainsLabel": { "message": "Domaines autorisés" },
+  "activityLabel": { "message": "Activité" },
+  "clearLink": { "message": "effacer" },
+  "containerLabel": { "message": "Conteneur propre à l'agent" },
+  "statusStopped": { "message": "Arrêté" },
+  "statusActive": { "message": "Actif" },
+  "statusActiveReadonly": { "message": "Actif (lecture seule)" },
+  "btnStop": { "message": "Arrêter" },
+  "btnStart": { "message": "Activer" },
+  "noDomains": { "message": "aucun pour l'instant" },
+  "noActivity": { "message": "aucune action pour l'instant" },
+  "badgeTitleStopped": { "message": "Agent arrêté. Cliquez pour l'activer." },
+  "badgeTitleActive": { "message": "Agent actif (interactif). Cliquez pour l'arrêter." },
+  "badgeTitleReadonly": { "message": "Agent actif (lecture seule). Cliquez pour l'arrêter." },
+  "consentTitle": { "message": "Autorisation de l'agent" },
+  "consentMessage": {
+    "message": "L'agent veut $verb$ sur :\n\n$domain$\n\nL'autorisez-vous pour cette session ?",
+    "placeholders": { "verb": { "content": "$1" }, "domain": { "content": "$2" } }
+  },
+  "consentAllow": { "message": "Autoriser" },
+  "consentDeny": { "message": "Refuser" },
+  "verbNavigate": { "message": "naviguer" },
+  "verbClick": { "message": "cliquer" },
+  "verbType": { "message": "saisir du texte" },
+  "verbAct": { "message": "agir" },
+  "verbDownloadFrom": { "message": "télécharger depuis" },
+  "downloadTitle": { "message": "Téléchargement de l'agent" },
+  "downloadMessage": {
+    "message": "L'agent veut télécharger :\n\n$url$\n\nL'autorisez-vous ?",
+    "placeholders": { "url": { "content": "$1" } }
+  },
+  "errStopped": { "message": "l'agent est arrêté ; activez-le depuis le bouton de la barre d'outils" },
+  "errDenied": {
+    "message": "autorisation refusée par l'utilisateur pour $domain$",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "errNotAllowlisted": {
+    "message": "le domaine $domain$ n'est pas dans la liste blanche de la politique",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "errDownloadDenied": { "message": "téléchargement refusé par l'utilisateur" },
+  "logOpen": { "message": "A ouvert $url$", "placeholders": { "url": { "content": "$1" } } },
+  "logNavigate": { "message": "A navigué vers $url$", "placeholders": { "url": { "content": "$1" } } },
+  "logClose": { "message": "A fermé un onglet" },
+  "logClick": { "message": "Clic" },
+  "logClickRef": { "message": "Clic sur $ref$", "placeholders": { "ref": { "content": "$1" } } },
+  "logClickAt": { "message": "Clic en ($x$, $y$)", "placeholders": { "x": { "content": "$1" }, "y": { "content": "$2" } } },
+  "logDoubleClick": { "message": "Double clic" },
+  "logRightClick": { "message": "Clic droit" },
+  "logDrag": { "message": "A glissé" },
+  "logDnd": { "message": "Glisser-déposer" },
+  "logType": { "message": "A saisi du texte ($count$ caractères)", "placeholders": { "count": { "content": "$1" } } },
+  "logScroll": { "message": "A fait défiler la page" },
+  "logDownload": { "message": "A téléchargé $url$", "placeholders": { "url": { "content": "$1" } } },
+  "logSnapshot": { "message": "A pris une capture d'écran" }
+}
