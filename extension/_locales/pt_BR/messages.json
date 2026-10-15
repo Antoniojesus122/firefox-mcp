@@ -57,5 +57,7 @@
   "logType": { "message": "Digitou texto ($count$ caracteres)", "placeholders": { "count": { "content": "$1" } } },
   "logScroll": { "message": "Rolou a página" },
   "logDownload": { "message": "Baixou $url$", "placeholders": { "url": { "content": "$1" } } },
-  "logSnapshot": { "message": "Capturou a tela" }
+  "logSnapshot": { "message": "Capturou a tela" },
+  "logKey": { "message": "Pressionou $key$", "placeholders": { "key": { "content": "$1" } } },
+  "logHover": { "message": "Passou o mouse por cima" }
 }

@@ -165,8 +165,7 @@ function readPageFn(opts) {
   const INTERACTIVE = new Set(["A", "BUTTON", "INPUT", "SELECT", "TEXTAREA", "SUMMARY", "OPTION"]);
   const CLICK_ROLES = new Set(["button", "link", "checkbox", "radio", "tab", "menuitem", "switch", "option"]);
 
-  function visible(el) {
-    const style = getComputedStyle(el);
+  function visible(el, style) {
     if (style.display === "none" || style.visibility === "hidden" || style.opacity === "0") {
       return false;
     }
@@ -227,7 +226,7 @@ function readPageFn(opts) {
     return maskSecrets(text.replace(/\s+/g, " ").slice(0, 120));
   }
 
-  function interactive(el) {
+  function interactive(el, style) {
     if (INTERACTIVE.has(el.tagName)) {
       return true;
     }
@@ -235,7 +234,21 @@ function readPageFn(opts) {
     if (r && CLICK_ROLES.has(r)) {
       return true;
     }
-    return el.hasAttribute("onclick") || el.tabIndex >= 0 || el.getAttribute("draggable") === "true";
+    if (el.hasAttribute("onclick") || el.tabIndex >= 0 || el.getAttribute("draggable") === "true") {
+      return true;
+    }
+    // Muchas webs con framework (React, etc.) ponen el manejador de clic con una
+    // propiedad, no con un atributo, y sin role: no hay forma de detectarlo por
+    // el DOM. El indicio que queda es cursor:pointer. Se marca solo si no envuelve
+    // un control estándar ni está DENTRO de otro ya pulsable (p.ej. el <span> de
+    // un enlace), para no duplicar ni etiquetar contenedores grandes.
+    const CLICKABLE_ANCESTOR = "a,button,summary,[role=button],[role=link],[role=menuitem],[role=tab],[role=checkbox],[role=radio],[onclick],[tabindex]";
+    if (style && style.cursor === "pointer" &&
+        !el.querySelector("a,button,input,select,textarea,summary,[role],[onclick],[tabindex],[draggable=true]") &&
+        !(el.parentElement && el.parentElement.closest(CLICKABLE_ANCESTOR))) {
+      return true;
+    }
+    return false;
   }
 
   const lines = [];
@@ -245,11 +258,12 @@ function readPageFn(opts) {
     if (truncated || depth > 20) {
       return;
     }
-    if (!visible(el)) {
+    const style = getComputedStyle(el);
+    if (!visible(el, style)) {
       return;
     }
     const r = role(el);
-    const act = interactive(el);
+    const act = interactive(el, style);
     if (onlyInteractive && !act) {
       for (const child of el.children) {
         walk(child, depth);
@@ -353,7 +367,16 @@ function resolveRefFn(ref) {
   const x = r.left + r.width / 2;
   const y = r.top + r.height / 2;
   const hit = document.elementFromPoint(x, y);
-  const covered = !(hit === el || el.contains(hit) || (hit && hit.contains(el)));
+  // No está tapado si el punto cae en el propio elemento, en un hijo suyo (el
+  // clic burbujea hasta él), en un ancestro, o en algo que cuelga de la misma
+  // referencia: webs como Cloudflare envuelven el texto del enlace en un <span>
+  // y elementFromPoint devuelve ese hijo.
+  const covered = !(
+    hit === el ||
+    el.contains(hit) ||
+    (hit && hit.contains(el)) ||
+    (hit && hit.closest("[" + "data-fxref" + "]") === el)
+  );
   function describe(node) {
     if (!node) {
       return null;
@@ -514,8 +537,10 @@ function fillSpecialFn(text) {
 }
 
 // Escribe en el elemento con el foco: inputs/textarea por value + evento input;
-// contentEditable con insertText.
-function typeSynthFn(text) {
+// contentEditable con insertText. Con replace=true vacía el campo primero (con
+// el setter nativo, que React reconoce). Si hay texto seleccionado, lo sustituye
+// e inserta en el punto del cursor (setRangeText), en vez de pegar al final.
+function typeSynthFn(text, replace) {
   const el = document.activeElement;
   if (!el || el === document.body) {
     return { ok: false, reason: "ningún campo tiene el foco" };
@@ -524,9 +549,25 @@ function typeSynthFn(text) {
   if (tag === "INPUT" || tag === "TEXTAREA") {
     const proto = tag === "INPUT" ? HTMLInputElement.prototype : HTMLTextAreaElement.prototype;
     const setter = Object.getOwnPropertyDescriptor(proto, "value").set;
+    if (replace) {
+      setter.call(el, "");
+      el.dispatchEvent(new InputEvent("input", { bubbles: true, inputType: "deleteContentBackward" }));
+    }
+    // setRangeText respeta la selección y mueve el cursor; no todos los tipos de
+    // input exponen selectionStart (number, date...), ahí se cae a añadir.
+    let useRange = false;
+    try {
+      useRange = typeof el.setRangeText === "function" && el.selectionStart !== null;
+    } catch (e) {
+      useRange = false;
+    }
     for (const ch of text) {
       el.dispatchEvent(new KeyboardEvent("keydown", { key: ch, bubbles: true }));
-      setter.call(el, el.value + ch);
+      if (useRange) {
+        el.setRangeText(ch, el.selectionStart, el.selectionEnd, "end");
+      } else {
+        setter.call(el, el.value + ch);
+      }
       el.dispatchEvent(new InputEvent("input", { bubbles: true, data: ch, inputType: "insertText" }));
       el.dispatchEvent(new KeyboardEvent("keyup", { key: ch, bubbles: true }));
     }
@@ -534,11 +575,111 @@ function typeSynthFn(text) {
     return { ok: true, synthetic: true };
   }
   if (el.isContentEditable) {
+    if (replace) {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const sel = getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      document.execCommand("delete", false);
+    }
     el.dispatchEvent(new InputEvent("beforeinput", { bubbles: true, data: text, inputType: "insertText" }));
     document.execCommand("insertText", false, text);
     return { ok: true, synthetic: true };
   }
   return { ok: false, reason: "el elemento con foco no es editable" };
+}
+
+// Pulsa una tecla, con modificadores, por eventos de script (versión pública).
+// Un KeyboardEvent sintético no cambia el campo por sí solo, así que implementa
+// los efectos de edición más usados: Ctrl+A selecciona, Retroceso/Supr borran y
+// Enter inserta un salto en un textarea. Para el resto dispara los eventos por
+// si la página los escucha.
+function keySynthFn(key, mods) {
+  mods = mods || {};
+  const el = document.activeElement || document.body;
+  const editable = el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA");
+  const ce = el && el.isContentEditable;
+  const init = {
+    key, bubbles: true, cancelable: true, composed: true,
+    ctrlKey: !!mods.ctrl, shiftKey: !!mods.shift, altKey: !!mods.alt, metaKey: !!mods.meta,
+  };
+  const prevented = !el.dispatchEvent(new KeyboardEvent("keydown", init));
+  const lower = (key || "").toLowerCase();
+  let acted = false;
+  if (!prevented && editable) {
+    const proto = el.tagName === "INPUT" ? HTMLInputElement.prototype : HTMLTextAreaElement.prototype;
+    const setter = Object.getOwnPropertyDescriptor(proto, "value").set;
+    const fire = type => el.dispatchEvent(new InputEvent("input", { bubbles: true, inputType: type }));
+    if ((mods.ctrl || mods.meta) && lower === "a") {
+      try {
+        el.setSelectionRange(0, el.value.length);
+      } catch (e) {
+        // algunos tipos de input no permiten seleccionar
+      }
+      acted = true;
+    } else if (key === "Backspace" || key === "Delete") {
+      let s = el.selectionStart;
+      let e = el.selectionEnd;
+      if (s === null) {
+        setter.call(el, "");
+        fire("deleteContentBackward");
+      } else {
+        if (s === e) {
+          if (key === "Backspace" && s > 0) {
+            s--;
+          } else if (key === "Delete" && e < el.value.length) {
+            e++;
+          }
+        }
+        if (s !== e) {
+          el.setRangeText("", s, e, "start");
+          fire(key === "Backspace" ? "deleteContentBackward" : "deleteContentForward");
+        }
+      }
+      acted = true;
+    } else if (key === "Enter" && el.tagName === "TEXTAREA") {
+      el.setRangeText("\n", el.selectionStart, el.selectionEnd, "end");
+      fire("insertLineBreak");
+      acted = true;
+    }
+    if (acted) {
+      el.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+  } else if (!prevented && ce) {
+    if ((mods.ctrl || mods.meta) && lower === "a") {
+      const r = document.createRange();
+      r.selectNodeContents(el);
+      const sel = getSelection();
+      sel.removeAllRanges();
+      sel.addRange(r);
+      acted = true;
+    } else if (key === "Backspace" || key === "Delete") {
+      document.execCommand(key === "Backspace" ? "delete" : "forwardDelete", false);
+      acted = true;
+    } else if (key === "Enter") {
+      document.execCommand("insertLineBreak", false);
+      acted = true;
+    }
+  }
+  el.dispatchEvent(new KeyboardEvent("keyup", init));
+  return { ok: true, synthetic: true, key, acted };
+}
+
+// Pasa el ratón por encima sin pulsar (versión pública): revela tooltips y menús
+// que solo aparecen al apuntar. Dispara los eventos de "over" en el punto dado.
+function hoverSynthFn(x, y) {
+  const el = document.elementFromPoint(x, y);
+  if (!el) {
+    return { ok: false, reason: "nada bajo el punto" };
+  }
+  const opt = { bubbles: true, cancelable: true, composed: true, view: window, clientX: x, clientY: y };
+  el.dispatchEvent(new PointerEvent("pointerover", opt));
+  el.dispatchEvent(new MouseEvent("mouseover", opt));
+  el.dispatchEvent(new MouseEvent("mouseenter", Object.assign({}, opt, { bubbles: false })));
+  el.dispatchEvent(new PointerEvent("pointermove", opt));
+  el.dispatchEvent(new MouseEvent("mousemove", opt));
+  return { ok: true, synthetic: true, target: describeEl(el) };
 }
 
 // Arrastre sintético con el botón izquierdo (deslizadores, lienzos, mapas).

@@ -57,5 +57,7 @@
   "logType": { "message": "Typed text ($count$ chars)", "placeholders": { "count": { "content": "$1" } } },
   "logScroll": { "message": "Scrolled the page" },
   "logDownload": { "message": "Downloaded $url$", "placeholders": { "url": { "content": "$1" } } },
-  "logSnapshot": { "message": "Took a screenshot" }
+  "logSnapshot": { "message": "Took a screenshot" },
+  "logKey": { "message": "Pressed $key$", "placeholders": { "key": { "content": "$1" } } },
+  "logHover": { "message": "Hovered" }
 }

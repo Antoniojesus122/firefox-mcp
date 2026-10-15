@@ -57,5 +57,7 @@
   "logType": { "message": "Digitato testo ($count$ caratteri)", "placeholders": { "count": { "content": "$1" } } },
   "logScroll": { "message": "Scorsa la pagina" },
   "logDownload": { "message": "Scaricato $url$", "placeholders": { "url": { "content": "$1" } } },
-  "logSnapshot": { "message": "Catturato lo schermo" }
+  "logSnapshot": { "message": "Catturato lo schermo" },
+  "logKey": { "message": "Premuto $key$", "placeholders": { "key": { "content": "$1" } } },
+  "logHover": { "message": "Passato il mouse sopra" }
 }

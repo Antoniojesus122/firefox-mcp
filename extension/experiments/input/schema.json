@@ -85,6 +85,28 @@
         "parameters": [
           { "name": "tabId", "type": "integer", "minimum": 0 }
         ]
+      },
+      {
+        "name": "key",
+        "type": "function",
+        "async": true,
+        "description": "Pulsa una tecla con modificadores sobre el elemento con el foco.",
+        "parameters": [
+          { "name": "tabId", "type": "integer", "minimum": 0 },
+          { "name": "key", "type": "string" },
+          { "name": "mods", "type": "object", "optional": true, "additionalProperties": { "type": "boolean" } }
+        ]
+      },
+      {
+        "name": "hover",
+        "type": "function",
+        "async": true,
+        "description": "Mueve el ratón a unas coordenadas CSS del viewport sin pulsar.",
+        "parameters": [
+          { "name": "tabId", "type": "integer", "minimum": 0 },
+          { "name": "x", "type": "number" },
+          { "name": "y", "type": "number" }
+        ]
       }
     ]
   }

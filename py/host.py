@@ -19,6 +19,13 @@ import winpipe
 MAX_FROM_BROWSER = 64 << 20
 MAX_FROM_CLIENT = 1 << 20
 REQUEST_TIMEOUT = 60.0
+# Órdenes que pueden abrir la ventana de consentimiento por dominio: esperan a
+# que una persona responda, así que se les da mucho más margen que al resto.
+CONSENT_TIMEOUT = 300.0
+CONSENT_CMDS = {
+    "open", "navigate", "click", "click_ref", "click_at", "double_click",
+    "right_click", "type", "key", "hover", "scroll", "drag", "dnd", "download",
+}
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 LOG = open(os.path.join(HERE, "host.log"), "a", encoding="utf-8")
@@ -120,11 +127,18 @@ class Router:
                 self.waiting.pop(internal, None)
             return error_reply(client_id, "no se pudo hablar con la extensión: " + str(e))
 
+        timeout = CONSENT_TIMEOUT if cmd in CONSENT_CMDS else REQUEST_TIMEOUT
         try:
-            resp = q.get(timeout=REQUEST_TIMEOUT)
+            resp = q.get(timeout=timeout)
         except queue.Empty:
             with self.lock:
                 self.waiting.pop(internal, None)
+            if cmd in CONSENT_CMDS:
+                return error_reply(
+                    client_id,
+                    "la extensión no respondió: ¿hay una ventana de permiso del "
+                    "agente esperando tu respuesta en Firefox?",
+                )
             return error_reply(client_id, "la extensión no respondió a tiempo")
         return with_id(resp, client_id)
 

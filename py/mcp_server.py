@@ -201,10 +201,44 @@ TOOLS = {
         lambda r: text_content("arrastrado"),
     ),
     "firefox_type": (
-        lambda a: ("type", {"tabId": req_int(a, "tabId"), "text": req_str(a, "text")}),
+        lambda a: ("type", _type_args(a)),
         lambda r: text_content("texto escrito"),
     ),
+    "firefox_key": (
+        lambda a: ("key", _key_args(a)),
+        lambda r: text_content("tecla pulsada"),
+    ),
+    "firefox_hover": (
+        lambda a: ("hover", _hover_args(a)),
+        json_content,
+    ),
 }
+
+
+def _type_args(a):
+    args = {"tabId": req_int(a, "tabId"), "text": req_str(a, "text")}
+    if a.get("replace") is True:
+        args["replace"] = True
+    return args
+
+
+def _key_args(a):
+    args = {"tabId": req_int(a, "tabId"), "key": req_str(a, "key")}
+    for m in ("ctrl", "shift", "alt", "meta"):
+        if a.get(m) is True:
+            args[m] = True
+    return args
+
+
+def _hover_args(a):
+    args = {"tabId": req_int(a, "tabId")}
+    if isinstance(a.get("ref"), str) and a["ref"]:
+        args["ref"] = a["ref"]
+    elif isinstance(a.get("x"), (int, float)) and isinstance(a.get("y"), (int, float)):
+        args["x"], args["y"] = a["x"], a["y"]
+    else:
+        raise ToolError("firefox_hover necesita 'ref' o 'x' e 'y' del punto")
+    return args
 
 
 def _scroll_args(a):
@@ -311,7 +345,9 @@ TOOL_LIST = [
     {"name": "firefox_network", "description": "Peticiones de red de la pestaña (método, estado, tipo, url). Solo metadatos, nunca el cuerpo. Se reinicia al navegar.", "inputSchema": _schema({"tabId": _TAB, "limit": {"type": "integer"}, "urlPattern": {"type": "string"}}, ["tabId"])},
     {"name": "firefox_console", "description": "Mensajes de consola (console.*) y errores de script de la pestaña.", "inputSchema": _schema({"tabId": _TAB}, ["tabId"])},
     {"name": "firefox_dnd", "description": "Drag-and-drop HTML5 desde la referencia 'from' hasta 'to' (otra referencia) o hasta el punto x,y (muchas zonas de soltar no tienen referencia). Listas ordenables, kanban. No sirve para soltar ficheros del sistema.", "inputSchema": _schema({"tabId": _TAB, "from": {"type": "string"}, "to": {"type": "string"}, "x": _NUM, "y": _NUM}, ["tabId", "from"])},
-    {"name": "firefox_type", "description": "Escribe texto con el teclado sobre el elemento que tiene el foco.", "inputSchema": _schema({"tabId": _TAB, "text": {"type": "string"}}, ["tabId", "text"])},
+    {"name": "firefox_type", "description": "Escribe texto con el teclado sobre el elemento que tiene el foco. Con replace=true vacía el campo antes de escribir; si hay texto seleccionado, lo sustituye.", "inputSchema": _schema({"tabId": _TAB, "text": {"type": "string"}, "replace": {"type": "boolean"}}, ["tabId", "text"])},
+    {"name": "firefox_key", "description": "Pulsa una tecla sobre el elemento con el foco: Enter, Tab, Escape, Backspace, Delete, flechas (ArrowLeft...) o una letra, con modificadores ctrl/shift/alt/meta. Por ejemplo key='a' con ctrl=true selecciona todo.", "inputSchema": _schema({"tabId": _TAB, "key": {"type": "string"}, "ctrl": {"type": "boolean"}, "shift": {"type": "boolean"}, "alt": {"type": "boolean"}, "meta": {"type": "boolean"}}, ["tabId", "key"])},
+    {"name": "firefox_hover", "description": "Pasa el ratón por encima de una referencia o de un punto x,y, sin pulsar, para revelar tooltips y menús que solo aparecen al apuntar.", "inputSchema": _schema({"tabId": _TAB, "ref": {"type": "string"}, "x": _NUM, "y": _NUM}, ["tabId"])},
 ]
 
 

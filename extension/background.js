@@ -177,9 +177,10 @@ const commands = {
     return runOne(tabId, `(${dragSynthFn})(${x1}, ${y1}, ${x2}, ${y2})`);
   },
 
-  async type({ tabId, text }) {
+  async type({ tabId, text, replace }) {
     // Campos nativos (hora, fecha, color...): se rellenan por valor, no por
-    // teclado. Si el foco es uno de ellos, se resuelve aquí.
+    // teclado. Si el foco es uno de ellos, se resuelve aquí (el valor sustituye
+    // al anterior de todos modos).
     const [sp] = await browser.tabs.executeScript(tabId, { code: `(${fillSpecialFn})(${JSON.stringify(text)})` });
     if (sp && sp.handled) {
       if (!sp.ok) {
@@ -188,9 +189,49 @@ const commands = {
       return sp;
     }
     if (hasExperiment()) {
+      // Con teclado real no hay setter: para reemplazar, se vacía el campo con
+      // Ctrl+A y Supr antes de escribir.
+      if (replace) {
+        await browser.agentInput.key(tabId, "a", { ctrl: true });
+        await browser.agentInput.key(tabId, "Delete", {});
+      }
       return browser.agentInput.typeText(tabId, text);
     }
-    return runOne(tabId, `(${typeSynthFn})(${JSON.stringify(text)})`);
+    return runOne(tabId, `(${typeSynthFn})(${JSON.stringify(text)}, ${replace ? "true" : "false"})`);
+  },
+
+  // Pulsa una tecla con modificadores sobre el elemento con el foco: Ctrl+A,
+  // Supr, Retroceso, Enter, Tab, Escape, flechas... Entrada real con el
+  // experimento; sintética en la versión pública.
+  async key({ tabId, key, ctrl, shift, alt, meta }) {
+    const mods = { ctrl: !!ctrl, shift: !!shift, alt: !!alt, meta: !!meta };
+    if (hasExperiment()) {
+      return browser.agentInput.key(tabId, key, mods);
+    }
+    return runOne(tabId, `(${keySynthFn})(${JSON.stringify(key)}, ${JSON.stringify(mods)})`);
+  },
+
+  // Pasa el ratón por encima (sin pulsar) de una referencia o de un punto, para
+  // revelar tooltips y menús que solo salen al apuntar.
+  async hover({ tabId, ref, x, y }) {
+    let px = x;
+    let py = y;
+    if (ref) {
+      const [pos] = await browser.tabs.executeScript(tabId, { code: `(${resolveRefFn})(${JSON.stringify(ref)})` });
+      if (!pos || !pos.found) {
+        throw new Error(`no existe la referencia ${ref} (relee la página)`);
+      }
+      px = pos.x;
+      py = pos.y;
+    }
+    if (typeof px !== "number" || typeof py !== "number") {
+      throw new Error("hover necesita una referencia o coordenadas x,y");
+    }
+    await pointer(tabId, px, py, "move");
+    if (hasExperiment()) {
+      return browser.agentInput.hover(tabId, px, py);
+    }
+    return runOne(tabId, `var describeEl=(${describeEl});(${hoverSynthFn})(${px}, ${py})`);
   },
 
   inspect: ({ tabId, x, y }) => browser.agentInput.inspect(tabId, x || 0, y || 0),
@@ -424,6 +465,8 @@ function logIfInteresting(cmd, msg) {
     drag: () => i18n("logDrag"),
     dnd: () => i18n("logDnd"),
     type: () => i18n("logType", String(String(msg.text || "").length)),
+    key: () => i18n("logKey", msg.key || ""),
+    hover: () => i18n("logHover"),
     scroll: () => i18n("logScroll"),
     download: () => i18n("logDownload", msg.url || ""),
     snapshot: () => i18n("logSnapshot"),

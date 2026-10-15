@@ -225,6 +225,49 @@ this.agentInput = class extends ExtensionAPI {
           return { switched, ...focusState(t.win) };
         }),
 
+        // Una tecla con modificadores (Ctrl+A, Supr, Enter, Tab, Escape...). Los
+        // modificadores se bajan antes y se sueltan después, para que el editor
+        // interprete el atajo (p.ej. Ctrl+A como seleccionar todo).
+        key: wrap(async (tabId, key, mods) => {
+          const t = locate(context, tabId);
+          const switched = await bringToFront(t);
+          mods = mods || {};
+          const tip = Cc["@mozilla.org/text-input-processor;1"].createInstance(
+            Ci.nsITextInputProcessor
+          );
+          if (!tip.beginInputTransactionForTests(t.win)) {
+            throw new ExtensionError("hay otra entrada de teclado en curso");
+          }
+          const ev = (k, code) => new t.win.KeyboardEvent("", {
+            key: k, code,
+            ctrlKey: !!mods.ctrl, shiftKey: !!mods.shift, altKey: !!mods.alt, metaKey: !!mods.meta,
+          });
+          const modKeys = [];
+          if (mods.ctrl) modKeys.push(["Control", "ControlLeft"]);
+          if (mods.shift) modKeys.push(["Shift", "ShiftLeft"]);
+          if (mods.alt) modKeys.push(["Alt", "AltLeft"]);
+          if (mods.meta) modKeys.push(["Meta", "OSLeft"]);
+          for (const [k, code] of modKeys) {
+            tip.keydown(ev(k, code));
+          }
+          const main = ev(NAMED_KEYS[key] || key, codeFor(key));
+          tip.keydown(main);
+          tip.keyup(main);
+          for (const [k, code] of modKeys.reverse()) {
+            tip.keyup(ev(k, code));
+          }
+          return { key, switched, ...focusState(t.win) };
+        }),
+
+        // Mover el ratón al punto sin pulsar: revela tooltips y menús al apuntar.
+        hover: wrap(async (tabId, x, y) => {
+          const t = locate(context, tabId);
+          const switched = await bringToFront(t);
+          const [cx, cy] = toWindow(t.browser, x, y);
+          await mouseSender(t.win, cx, cy)("mousemove", 0, 0);
+          return { x, y, wx: cx, wy: cy, switched, ...focusState(t.win) };
+        }),
+
         inspect: wrap(async (tabId, x, y) => {
           const t = locate(context, tabId);
           const sel = t.win.gBrowser.selectedTab;

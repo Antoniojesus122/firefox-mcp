@@ -24,7 +24,7 @@ const security = {
 
 const WRITE = new Set([
   "open", "navigate", "close", "click", "click_ref", "click_at",
-  "type", "double_click", "right_click", "scroll", "drag", "dnd", "download",
+  "type", "key", "hover", "double_click", "right_click", "scroll", "drag", "dnd", "download",
 ]);
 
 let policyApplied = false;

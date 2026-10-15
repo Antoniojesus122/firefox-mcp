@@ -57,5 +57,7 @@
   "logType": { "message": "A saisi du texte ($count$ caractères)", "placeholders": { "count": { "content": "$1" } } },
   "logScroll": { "message": "A fait défiler la page" },
   "logDownload": { "message": "A téléchargé $url$", "placeholders": { "url": { "content": "$1" } } },
-  "logSnapshot": { "message": "A pris une capture d'écran" }
+  "logSnapshot": { "message": "A pris une capture d'écran" },
+  "logKey": { "message": "A appuyé sur $key$", "placeholders": { "key": { "content": "$1" } } },
+  "logHover": { "message": "A survolé" }
 }

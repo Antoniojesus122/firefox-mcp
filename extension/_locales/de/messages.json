@@ -57,5 +57,7 @@
   "logType": { "message": "Text getippt ($count$ Zeichen)", "placeholders": { "count": { "content": "$1" } } },
   "logScroll": { "message": "Seite gescrollt" },
   "logDownload": { "message": "$url$ heruntergeladen", "placeholders": { "url": { "content": "$1" } } },
-  "logSnapshot": { "message": "Screenshot aufgenommen" }
+  "logSnapshot": { "message": "Screenshot aufgenommen" },
+  "logKey": { "message": "Taste $key$ gedrückt", "placeholders": { "key": { "content": "$1" } } },
+  "logHover": { "message": "Überfahren" }
 }
