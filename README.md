@@ -1,4 +1,5 @@
 # firefox-mcp
+[![M8ven Score](https://m8ven.ai/badge/mcp/antoniojesus122-firefox-mcp-sm83hx?v=789dcd4f5fb3a17afa66819fc0b2c1f9)](https://m8ven.ai/mcp/antoniojesus122-firefox-mcp-sm83hx?s=readme)
 
 <p align="center">
   <img alt="English" src="https://img.shields.io/badge/-English-1f6feb?style=flat-square">
